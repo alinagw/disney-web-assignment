@@ -5,7 +5,9 @@
     <v-icon>mdi-delete</v-icon>
   </template>
   <template v-slot:footer="{ data }">
-    
+    <v-btn block text large>
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </template>
 </v-data-table>
 </template>
