@@ -1,5 +1,7 @@
 # Disney TVA Take Home Web Assignment
 
+Made by **Alina Walling** for the Disney TV Animation Associate Web Developer Position in 2019.
+
 ## Usage
 
 ##### 1. Clone Repo
@@ -32,8 +34,6 @@ Web app should run locally at `http://localhost:8080`. Navigate to this URL (or 
 ```
 npm run serve
 ```
-
----
 
 ## Approach
 
@@ -68,8 +68,6 @@ I really hope you enjoy! :D
 * SQLite
 * Sequelize
 * Node
-
----
 
 ## References
 * [Vue Docs](https://vuejs.org/)
