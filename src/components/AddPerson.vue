@@ -1,16 +1,12 @@
 <template>
-  <v-card class="pa-1">
-    <v-card-title class="headline">
-      {{ title }}
-    </v-card-title>
+  <v-card class="px-1 py-2">
+    <v-card-title class="headline">{{ title }}</v-card-title>
     <v-card-text class="pb-0">
-      <div>
-        {{ subtitle }}
-      </div>
+      <div>{{ subtitle }}</div>
       <v-form v-model="valid" ref="form">
         <v-container class="pb-0">
           <v-row>
-            <v-col cols="12" class="pb-0">
+            <v-col cols="12" class="pb-1">
               <v-text-field
                 label="Name"
                 prepend-icon="mdi-account"
@@ -21,7 +17,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="py-0">
+            <v-col cols="12" class="py-1">
               <v-text-field
                 label="Email"
                 prepend-icon="mdi-email"
@@ -33,7 +29,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="6" class="py-0">
+            <v-col cols="6" class="py-1">
               <v-text-field
                 label="Zip Code"
                 prepend-icon="mdi-map-marker"
@@ -44,7 +40,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="6" class="py-0">
+            <v-col cols="6" class="py-1">
               <v-menu ref="menu" v-model="datePicker" :close-on-content-click="false" offset-y>
                 <template v-slot:activator="{ on }">
                   <v-text-field
@@ -89,7 +85,7 @@
 <script>
 export default {
   name: "AddPerson",
-  props: ["editing", "createPerson", "savePerson", "cancel"],
+  props: ["editing", "createPerson", "savePerson", "cancel", "emailExists", "setMsg"],
   data: () => ({
     datePicker: false,
     newPerson: null,
@@ -111,7 +107,10 @@ export default {
       return "🔥 " + (this.isEditing ? "Edit the Burner" : "Who burned you?");
     },
     subtitle() {
-      return (this.isEditing ? "Update" : "Keep track of") + " their info so you can eventually get your rightful revenge.";
+      return (
+        (this.isEditing ? "Update" : "Keep track of") +
+        " their info so you can eventually get your rightful revenge."
+      );
     }
   },
   created() {
@@ -132,9 +131,13 @@ export default {
     },
     submit() {
       if (this.valid) {
-        if (this.editing === null) this.createPerson(this.newPerson);
-        else this.savePerson(this.newPerson);
-        this.setNewPerson();
+        if (!this.emailExists(this.newPerson.email)) {
+          if (this.editing === null) this.createPerson(this.newPerson);
+          else this.savePerson(this.newPerson);
+          this.setNewPerson();
+        } else {
+          this.setMsg("⚠️ This email address is already in use");
+        }
       } else {
         this.$refs.form.validate();
       }

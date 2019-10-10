@@ -37,6 +37,8 @@
                 :create-person="addPerson"
                 :save-person="saveEditPerson"
                 :cancel="cancel"
+                :email-exists="emailExists"
+                :set-msg="setMsg"
               ></add-person>
             </v-dialog>
           </v-card>
@@ -53,6 +55,9 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="showMsg" :timeout="4000">
+      {{ msg }}
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -81,20 +86,25 @@ export default {
     editing: null,
     showAddPerson: false,
     tablePage: 1,
-    tablePageCount: 0
+    tablePageCount: 0,
+    msg: "",
+    showMsg: false
   }),
   methods: {
     addPerson(person) {
       this.people.push(person);
       this.showAddPerson = false;
+      this.setMsg("🔥 Person added to burn book");
     },
     deletePerson(person) {
       this.people.splice(this.people.indexOf(person), 1);
+      this.setMsg("🗑️ Person deleted from burn book");
     },
     saveEditPerson(newPerson) {
       this.people.splice(this.people.indexOf(this.editing), 1, newPerson);
       this.editing = null;
       this.showAddPerson = false;
+      this.setMsg("💁 Changes to person saved to burn book");
     },
     editPerson(person) {
       this.editing = person;
@@ -103,6 +113,21 @@ export default {
     cancel() {
       this.editing = null;
       this.showAddPerson = false;
+    },
+    emailExists(email) {
+      for (var person in this.people) {
+        var p = this.people[person];
+        if (p.hasOwnProperty("email")) {
+          if (p.email === email) {
+            return true;
+          }
+        }
+      }
+      return false;
+    },
+    setMsg(msg) {
+      this.msg = msg;
+      this.showMsg = true;
     }
   }
 };

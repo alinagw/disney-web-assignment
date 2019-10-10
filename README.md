@@ -35,3 +35,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 * Vue
 * Vuetify
 * Material Design Icons
+* UI Gradients
+* Google Fonts
