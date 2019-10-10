@@ -5,35 +5,60 @@ const PORT = process.env.PORT || 3000;
 // use Express as our router
 const Express = require('express');
 const BodyParser = require('body-parser');
+const Sequelize = require('sequelize');
 
 // create express app
 const app = Express();
 
-// // parse form data more easily
-app.use(BodyParser.urlencoded({
-    extended: true
-}));
-// // parse JSON form data
+app.use(BodyParser.urlencoded({ extended: true }));
 app.use(BodyParser.json());
+
+var db = new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.sqlite'
+});
+
+var Person = db.define('person', {
+    name: Sequelize.STRING,
+    email: Sequelize.STRING,
+    zip: Sequelize.STRING,
+    birthday: Sequelize.STRING
+}, {});
 
 app.get('/api/people', (req, res) => {
     // get people and return
+    return Person.findAll()
+    .then((people) => res.send(people))
+    .catch((error) => res.send(error));
 });
 
 app.post('/api/people', (req, res) => {
     const { name, email, zip, birthday } = req.body;
     // create new person
+    return db.Person.create({ name, email, zip, birthday })
+    .then((person) => res.send(person))
+    .catch((error) => res.send(error));
 });
 
 app.put('/api/people/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const { name, email, zip, birthday } = req.body;
     // update person
+    return db.Person.findById(id)
+    .then((person) => {
+        return person.update({ name, email, zip, birthday })
+        .then(() => res.send(person))
+        .catch((error) => res.send(error));
+    });
 });
 
 app.delete('/api/people/:id', (req, res) => {
     const id = parseInt(req.params.id);
     // remove person from id
+    return db.Person.findById(id)
+    .then((person) => person.destroy())
+    .then(() => res.send(id))
+    .catch((error) => res.send(error));
 });
 
 // start server to listen for requests

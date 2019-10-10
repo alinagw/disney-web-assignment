@@ -104,7 +104,7 @@ export default {
       this.people.splice(this.people.indexOf(this.editing), 1, newPerson);
       this.editing = null;
       this.showAddPerson = false;
-      this.setMsg("💁 Changes to person saved to burn book");
+      this.setMsg("😎 Changes to person saved to burn book");
     },
     editPerson(person) {
       this.editing = person;
