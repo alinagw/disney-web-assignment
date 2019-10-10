@@ -35,7 +35,7 @@
               <add-person
                 :editing="editing"
                 :create-person="addPerson"
-                :save-person="saveEditPerson"
+                :update-person="updatePerson"
                 :cancel="cancel"
                 :email-exists="emailExists"
                 :set-msg="setMsg"
@@ -68,6 +68,9 @@
 import PeopleTable from "./components/PeopleTable";
 import AddPerson from "./components/AddPerson";
 
+const axios = require('axios');
+const API_URL = "http://localhost:3000/api/people";
+
 export default {
   name: "App",
   components: {
@@ -76,12 +79,12 @@ export default {
   },
   data: () => ({
     people: [
-      {
-        name: "Carlos",
-        email: "carlos@gmail.com",
-        zip: 27705,
-        birthday: "1997-02-01"
-      }
+      // {
+      //   name: "Carlos",
+      //   email: "carlos@gmail.com",
+      //   zip: 27705,
+      //   birthday: "1997-02-01"
+      // }
     ],
     editing: null,
     showAddPerson: false,
@@ -90,21 +93,52 @@ export default {
     msg: "",
     showMsg: false
   }),
+  created: function() {
+    axios.get(API_URL)
+    .then((res) => this.people = res.data)
+    .catch((error) => {
+      console.log(error);
+      this.setMsg("Error fetching people");
+    });
+  },
   methods: {
     addPerson(person) {
-      this.people.push(person);
-      this.showAddPerson = false;
-      this.setMsg("🔥 Person added to burn book");
+      axios.post(API_URL, person)
+      .then((res) => {
+        this.people.push(res.data);
+        this.showAddPerson = false;
+        this.setMsg("🔥 Person added to burn book");
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setMsg("Error adding person");
+      });
     },
     deletePerson(person) {
-      this.people.splice(this.people.indexOf(person), 1);
-      this.setMsg("🗑️ Person deleted from burn book");
+      if (confirm("Are you sure you want to delete this person?")) {
+        axios.delete(`${API_URL}/${person.id}`)
+        .then((res) => {
+          this.people.splice(this.people.indexOf(res.data), 1);
+          this.setMsg("🗑️ Person deleted from burn book");
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setMsg("Error deleting person");
+        });
+      }
     },
-    saveEditPerson(newPerson) {
-      this.people.splice(this.people.indexOf(this.editing), 1, newPerson);
-      this.editing = null;
-      this.showAddPerson = false;
-      this.setMsg("😎 Changes to person saved to burn book");
+    updatePerson(newPerson) {
+      axios.put(`${API_URL}/${this.editing.id}`, newPerson)
+      .then((res) => {
+        this.people.splice(this.people.indexOf(this.editing), 1, res.data);
+        this.editing = null;
+        this.showAddPerson = false;
+        this.setMsg("😎 Changes to person saved to burn book");
+      })
+      .catch((error) => {
+          console.log(error);
+          this.setMsg("Error updating person");
+      });
     },
     editPerson(person) {
       this.editing = person;

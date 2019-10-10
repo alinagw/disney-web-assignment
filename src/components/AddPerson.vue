@@ -85,7 +85,7 @@
 <script>
 export default {
   name: "AddPerson",
-  props: ["editing", "createPerson", "savePerson", "cancel", "emailExists", "setMsg"],
+  props: ["editing", "createPerson", "updatePerson", "cancel", "emailExists", "setMsg"],
   data: () => ({
     datePicker: false,
     newPerson: null,
@@ -131,10 +131,10 @@ export default {
     },
     submit() {
       if (this.valid) {
-        if (!this.emailExists(this.newPerson.email)) {
-          if (this.editing === null) this.createPerson(this.newPerson);
-          else this.savePerson(this.newPerson);
-          this.setNewPerson();
+        if (this.editing === null && !this.emailExists(this.newPerson.email)) {
+          this.createPerson(this.newPerson);
+        } else if (this.editing !== null) {
+          this.updatePerson(this.newPerson);
         } else {
           this.setMsg("⚠️ This email address is already in use");
         }

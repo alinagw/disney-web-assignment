@@ -37,3 +37,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 * Material Design Icons
 * UI Gradients
 * Google Fonts
+* https://stackoverflow.com/questions/41577597/sequelize-findbyid-is-not-a-function-but-apparently-findall-is
+* Sequelize
