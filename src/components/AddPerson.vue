@@ -1,11 +1,16 @@
 <template>
   <v-card class="px-1 py-2">
+
+    <!-- Dialog title and subtitle -->
     <v-card-title class="headline">{{ title }}</v-card-title>
     <v-card-text class="pb-0">
       <div>{{ subtitle }}</div>
+
+      <!-- Person info form -->
       <v-form v-model="valid" ref="form">
         <v-container class="pb-0">
           <v-row>
+            <!-- Name -->
             <v-col cols="12" class="pb-1">
               <v-text-field
                 label="Name"
@@ -17,6 +22,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
+            <!-- Email -->
             <v-col cols="12" class="py-1">
               <v-text-field
                 label="Email"
@@ -29,6 +35,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
+            <!-- Zip Code -->
             <v-col cols="6" class="py-1">
               <v-text-field
                 label="Zip Code"
@@ -40,6 +47,7 @@
                 color="pink lighten-2"
               ></v-text-field>
             </v-col>
+            <!-- Birthday -->
             <v-col cols="6" class="py-1">
               <v-menu ref="menu" v-model="datePicker" :close-on-content-click="false" offset-y>
                 <template v-slot:activator="{ on }">
@@ -71,6 +79,8 @@
         </v-container>
       </v-form>
     </v-card-text>
+
+    <!-- Add / Save and Cancel buttons -->
     <v-card-actions>
       <div class="flex-grow-1"></div>
       <v-btn @click="cancel" text color="grey darken-2">Cancel</v-btn>
@@ -85,9 +95,15 @@
 <script>
 export default {
   name: "AddPerson",
-  props: ["editing", "createPerson", "updatePerson", "cancel", "emailExists", "setMsg"],
-  data: () => ({
-    datePicker: false,
+  props: [
+    "editing",  // existing person being edited
+    "createPerson",
+    "updatePerson",
+    "cancel",
+    "emailExists",  // check if email already used
+    "setMsg"
+  ],
+  data: () => ({  
     newPerson: null,
     valid: true,
     rules: {
@@ -97,7 +113,8 @@ export default {
         return pattern.test(value) || "Invalid email address";
       },
       zip: value => /^\d{5}$/.test(value) || "Invalid zip code"
-    }
+    },
+    datePicker: false
   }),
   computed: {
     isEditing() {

@@ -1,28 +1,19 @@
 <template>
 <v-data-table :headers="headers" :items="people" :page.sync="page" hide-default-footer v-on="$listeners">
+  <!-- Birthday slot custom date formatting -->
   <template v-slot:item.birthday="{ item }">
     {{ formatDate(item.birthday) }}
   </template>
+  <!-- Actions slot with custom icons for editing and deleting -->
   <template v-slot:item.action="{ item }">
     <v-icon class="action-btn mr-3" @click="editPerson(item)">mdi-pencil</v-icon>
     <v-icon class="action-btn" @click="deletePerson(item)">mdi-delete</v-icon>
-    <!-- <v-dialog>
-      <template v-slot:activator="{ on }">
-        <v-icon class="action-btn">mdi-delete</v-icon>
-      </template>
-      <v-card>
-        <v-card-title>Are you sure you want to delete this person?</v-card-title>
-        <v-card-text>Maybe you've had a change of heart and they no longer belong in your burn book. If that's the case, make sure you confirm their removal.</v-card-text>
-        <v-card-actions>
-          <v-btn>Cancel</v-btn>
-          <v-btn @click="deletePerson(item)">Delete</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
   </template>
+  <!-- Footer slot to add divider -->
   <template v-slot:footer>
     <v-divider />
   </template>
+  <!-- No data slot to display when no entries -->
   <template v-slot:no-data>
     <div class="grey--text text--darken-3">Looks like no one has burned you yet! Time to make some enemies. 😈</div>
   </template>

@@ -1,11 +1,10 @@
-// when deployed, use locally defined values, otherwise use typical settings for server
-const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT || 3000;
 
 // use Express as our router
 const Express = require('express');
 const BodyParser = require('body-parser');
 const Cors = require('cors');
+// use Sequelize for our local database
 const Sequelize = require('sequelize');
 
 // create express app
@@ -14,11 +13,13 @@ app.use(Cors());
 app.use(BodyParser.urlencoded({ extended: true }));
 app.use(BodyParser.json());
 
+// create SQLite database with Sequelize
 var db = new Sequelize({
     dialect: 'sqlite',
     storage: './database.sqlite'
 });
 
+// define person model for database
 var Person = db.define('person', {
     name: Sequelize.STRING,
     email: Sequelize.STRING,
@@ -26,35 +27,28 @@ var Person = db.define('person', {
     birthday: Sequelize.STRING
 }, {});
 
-//db.sync({ force: true });
-Person.sync({ force: true }).then(function () {
-    var carlos = {
-        name: "Carlos",
-        email: "carlos@gmail.com",
-        zip: 27705,
-        birthday: "1997-02-01"
-      };
-    return Person.create(carlos);
-});
+// create table in database for people
+Person.sync({ force: true });
 
+// API get people from database
 app.get('/api/people', (req, res) => {
     return Person.findAll()
     .then((people) => res.send(people))
     .catch((error) => res.send(error));
 });
 
+// API add new person to database
 app.post('/api/people', (req, res) => {
     const { name, email, zip, birthday } = req.body;
-    // create new person
     return Person.create({ name, email, zip, birthday })
     .then((person) => res.send(person))
     .catch((error) => res.send(error));
 });
 
+// API update person in database
 app.put('/api/people/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const { name, email, zip, birthday } = req.body;
-    // update person
     return Person.findByPk(id)
     .then((person) => {
         return person.update({ name, email, zip, birthday })
@@ -63,9 +57,9 @@ app.put('/api/people/:id', (req, res) => {
     });
 });
 
+// API delete person from database
 app.delete('/api/people/:id', (req, res) => {
     const id = parseInt(req.params.id);
-    // remove person from id
     return Person.findByPk(id)
     .then((person) => person.destroy())
     .then(() => res.send(person))
@@ -74,5 +68,5 @@ app.delete('/api/people/:id', (req, res) => {
 
 // start server to listen for requests
 app.listen(PORT, function () {
-    console.log('Server is listening on port 3000');
+    console.log(`Server is listening on port ${PORT}`);
 });

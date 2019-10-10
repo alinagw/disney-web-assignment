@@ -17,7 +17,6 @@
 
             <!-- People Table -->
             <people-table
-              id="people-table"
               :people="people"
               :edit-person="editPerson"
               :delete-person="deletePerson"
@@ -55,21 +54,19 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar v-model="showMsg" :timeout="4000">
-      {{ msg }}
-    </v-snackbar>
+
+    <!-- Messages -->
+    <v-snackbar v-model="showMsg" :timeout="4000">{{ msg }}</v-snackbar>
   </v-app>
 </template>
 
-
-
-
 <script>
+const axios = require("axios");
+const API_URL = "http://localhost:3000/api/people";
+
+// import components
 import PeopleTable from "./components/PeopleTable";
 import AddPerson from "./components/AddPerson";
-
-const axios = require('axios');
-const API_URL = "http://localhost:3000/api/people";
 
 export default {
   name: "App",
@@ -78,14 +75,7 @@ export default {
     AddPerson
   },
   data: () => ({
-    people: [
-      // {
-      //   name: "Carlos",
-      //   email: "carlos@gmail.com",
-      //   zip: 27705,
-      //   birthday: "1997-02-01"
-      // }
-    ],
+    people: [],
     editing: null,
     showAddPerson: false,
     tablePage: 1,
@@ -93,52 +83,55 @@ export default {
     msg: "",
     showMsg: false
   }),
+
+  // fetch all people stored in database on creation of Vue instance
   created: function() {
     axios.get(API_URL)
-    .then((res) => this.people = res.data)
-    .catch((error) => {
-      console.log(error);
-      this.setMsg("Error fetching people");
-    });
+      .then((res) => this.people = res.data)
+      .catch((error) => {
+        console.log(error);
+        this.setMsg("Error fetching people");
+      });
   },
+
   methods: {
     addPerson(person) {
       axios.post(API_URL, person)
-      .then((res) => {
-        this.people.push(res.data);
-        this.showAddPerson = false;
-        this.setMsg("🔥 Person added to burn book");
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setMsg("Error adding person");
-      });
+        .then((res) => {
+          this.people.push(res.data);
+          this.showAddPerson = false;
+          this.setMsg("🔥 Person added to burn book");
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setMsg("Error adding person");
+        });
     },
     deletePerson(person) {
       if (confirm("Are you sure you want to delete this person?")) {
         axios.delete(`${API_URL}/${person.id}`)
-        .then((res) => {
-          this.people.splice(this.people.indexOf(res.data), 1);
-          this.setMsg("🗑️ Person deleted from burn book");
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setMsg("Error deleting person");
-        });
+          .then((res) => {
+            this.people.splice(this.people.indexOf(res.data), 1);
+            this.setMsg("🗑️ Person deleted from burn book");
+          })
+          .catch((error) => {
+            console.log(error);
+            this.setMsg("Error deleting person");
+          });
       }
     },
     updatePerson(newPerson) {
       axios.put(`${API_URL}/${this.editing.id}`, newPerson)
-      .then((res) => {
-        this.people.splice(this.people.indexOf(this.editing), 1, res.data);
-        this.editing = null;
-        this.showAddPerson = false;
-        this.setMsg("😎 Changes to person saved to burn book");
-      })
-      .catch((error) => {
+        .then((res) => {
+          this.people.splice(this.people.indexOf(this.editing), 1, res.data);
+          this.editing = null;
+          this.showAddPerson = false;
+          this.setMsg("😎 Changes to person saved to burn book");
+        })
+        .catch((error) => {
           console.log(error);
           this.setMsg("Error updating person");
-      });
+        });
     },
     editPerson(person) {
       this.editing = person;
@@ -150,11 +143,8 @@ export default {
     },
     emailExists(email) {
       for (var person in this.people) {
-        var p = this.people[person];
-        if (p.hasOwnProperty("email")) {
-          if (p.email === email) {
-            return true;
-          }
+        if (this.people[person].hasOwnProperty("email")) {
+          if (this.people[person].email === email) return true;
         }
       }
       return false;
@@ -169,15 +159,9 @@ export default {
 
 <style scoped>
 #app {
-  background: #b24592; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    #f15f79,
-    #b24592
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    #f15f79,
-    #b24592
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #b24592;
+  background: -webkit-linear-gradient(#f15f79,#b24592);
+  background: linear-gradient(#f15f79,#b24592);
 }
 
 #content {
