@@ -100,6 +100,7 @@ export default {
         .then((res) => {
           this.people.push(res.data);
           this.showAddPerson = false;
+          this.editing = null;
           this.setMsg("🔥 Person added to burn book");
         })
         .catch((error) => {
@@ -111,7 +112,7 @@ export default {
       if (confirm("Are you sure you want to delete this person?")) {
         axios.delete(`${API_URL}/${person.id}`)
           .then((res) => {
-            this.people.splice(this.people.indexOf(res.data), 1);
+            this.people.splice(this.people.indexOf(person), 1);
             this.setMsg("🗑️ Person deleted from burn book");
           })
           .catch((error) => {

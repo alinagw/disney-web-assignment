@@ -148,10 +148,12 @@ export default {
     },
     submit() {
       if (this.valid) {
-        if (this.editing === null && !this.emailExists(this.newPerson.email)) {
+        if (!this.isEditing && !this.emailExists(this.newPerson.email)) {
           this.createPerson(this.newPerson);
-        } else if (this.editing !== null) {
-          this.updatePerson(this.newPerson);
+          this.setNewPerson();
+        } else if (this.isEditing && (!this.emailExists(this.newPerson.email) || this.newPerson.email === this.editing.email)) {
+            this.updatePerson(this.newPerson);
+            this.setNewPerson();
         } else {
           this.setMsg("⚠️ This email address is already in use");
         }
