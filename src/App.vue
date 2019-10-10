@@ -111,7 +111,7 @@ export default {
     deletePerson(person) {
       if (confirm("Are you sure you want to delete this person?")) {
         axios.delete(`${API_URL}/${person.id}`)
-          .then((res) => {
+          .then(() => {
             this.people.splice(this.people.indexOf(person), 1);
             this.setMsg("🗑️ Person deleted from burn book");
           })
