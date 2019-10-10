@@ -1,23 +1,27 @@
 <template>
-  <v-card>
-    <v-card-title>
-      <span v-show="isEditing">Edit Person</span> 
-      <span v-show="!isEditing">Add New Person</span> 
+  <v-card class="pa-1">
+    <v-card-title class="headline">
+      {{ title }}
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="pb-0">
+      <div>
+        {{ subtitle }}
+      </div>
       <v-form v-model="valid" ref="form">
-        <v-container>
+        <v-container class="pb-0">
           <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="pb-0">
               <v-text-field
                 label="Name"
                 prepend-icon="mdi-account"
                 v-model="newPerson.name"
                 :rules="[rules.required]"
                 validate-on-blur
+                outlined
+                color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="py-0">
               <v-text-field
                 label="Email"
                 prepend-icon="mdi-email"
@@ -25,18 +29,22 @@
                 type="email"
                 :rules="[rules.required, rules.email]"
                 validate-on-blur
+                outlined
+                color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="6" class="py-0">
               <v-text-field
                 label="Zip Code"
                 prepend-icon="mdi-map-marker"
                 v-model="newPerson.zip"
                 :rules="[rules.required, rules.zip]"
                 validate-on-blur
+                outlined
+                color="pink lighten-2"
               ></v-text-field>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="6" class="py-0">
               <v-menu ref="menu" v-model="datePicker" :close-on-content-click="false" offset-y>
                 <template v-slot:activator="{ on }">
                   <v-text-field
@@ -50,6 +58,8 @@
                     :rules="[rules.required]"
                     prepend-icon="mdi-cake-variant"
                     validate-on-blur
+                    outlined
+                    color="pink lighten-2"
                   />
                 </template>
                 <v-date-picker
@@ -67,8 +77,8 @@
     </v-card-text>
     <v-card-actions>
       <div class="flex-grow-1"></div>
-      <v-btn @click="cancel">Cancel</v-btn>
-      <v-btn @click="submit">
+      <v-btn @click="cancel" text color="grey darken-2">Cancel</v-btn>
+      <v-btn @click="submit" depressed dark color="pink lighten-2">
         <span v-show="isEditing">Save</span>
         <span v-show="!isEditing">Add</span>
       </v-btn>
@@ -96,6 +106,12 @@ export default {
   computed: {
     isEditing() {
       return this.editing !== null;
+    },
+    title() {
+      return "🔥 " + (this.isEditing ? "Edit the Burner" : "Who burned you?");
+    },
+    subtitle() {
+      return (this.isEditing ? "Update" : "Keep track of") + " their info so you can eventually get your rightful revenge.";
     }
   },
   created() {
